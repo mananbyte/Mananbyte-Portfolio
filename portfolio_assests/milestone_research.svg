@@ -6,6 +6,6 @@
     </linearGradient>
   </defs>
   <rect width="640" height="360" fill="url(#bg)"/>
-  <text x="320" y="150" text-anchor="middle" fill="#a855f7" font-family="Inter,sans-serif" font-size="56">=,</text>
+  <text x="320" y="150" text-anchor="middle" fill="#a855f7" font-family="Inter,sans-serif" font-size="56">🔬</text>
   <text x="320" y="240" text-anchor="middle" fill="#fff" font-family="Inter,sans-serif" font-size="24" font-weight="700">Medical Imaging Research</text>
 </svg>

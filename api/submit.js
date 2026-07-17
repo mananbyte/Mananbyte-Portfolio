@@ -1,6 +1,6 @@
 const https = require('https');
 
-const FROM_ADDRESS = 'Abdul Manan <contact@send.mananbyte.app>';
+const FROM_ADDRESS = 'Abdul Manan <talk@mananbyte.app>';
 
 function escapeHtml(value) {
   return String(value)
@@ -107,7 +107,7 @@ module.exports = async function handler(req, res) {
           <div style="font-family: Inter, Arial, sans-serif; color: #111827; line-height: 1.6;">
             <p>Hi ${safeName},</p>
             <p>Thanks for contacting me through my portfolio. I received your message and will get back to you soon.</p>
-            <p style="color: #6b7280; font-size: 14px;">— Abdul Manan<br/>contact@send.mananbyte.app</p>
+            <p style="color: #6b7280; font-size: 14px;">— Abdul Manan<br/>talk@mananbyte.app</p>
           </div>
         `,
       }),
