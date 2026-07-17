@@ -15,17 +15,22 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { name, email, message } = req.body;
+    const { name, email, message } = req.body || {};
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ message: 'Missing required fields: name, email, message' });
+    }
 
     const payload = JSON.stringify({
       from: 'Portfolio Contact <onboarding@resend.dev>',
       to: receiverEmail,
+      reply_to: email,
       subject: `New Portfolio Message from ${name}`,
       html: `
         <h3>New Contact Form Submission</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong><br/>${message.replace(/\n/g, '<br/>')}</p>
+        <p><strong>Message:</strong><br/>${String(message).replace(/\n/g, '<br/>')}</p>
       `
     });
 
