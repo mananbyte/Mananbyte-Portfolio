@@ -1771,6 +1771,27 @@ body {
     opacity: 0.9;
 }
 
+.footer-contact {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+.footer-contact a {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-contact a:hover {
+    color: var(--accent-purple);
+}
+
+.footer-contact-divider {
+    margin: 0 10px;
+    color: #6b7280;
+}
+
 
 .footer-nav-links {
     list-style: none;
