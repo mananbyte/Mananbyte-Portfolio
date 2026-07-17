@@ -1,5 +1,3 @@
-// Vercel Speed Insights initialization
-import { injectSpeedInsights } from '@vercel/speed-insights';
+import { injectSpeedInsights } from 'https://esm.sh/@vercel/speed-insights';
 
-// Initialize Speed Insights when the script loads
 injectSpeedInsights();

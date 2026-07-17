@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
     }
 
     const payload = JSON.stringify({
-      from: 'Portfolio Contact <onboarding@resend.dev>',
+      from: 'Portfolio Contact <contact@send.mananbyte.app>',
       to: receiverEmail,
       reply_to: email,
       subject: `New Portfolio Message from ${name}`,
@@ -65,9 +65,14 @@ module.exports = async function handler(req, res) {
 
     if (data.status === 200 || data.status === 201) {
       return res.status(200).json({ success: true, message: 'Message sent!' });
-    } else {
-      return res.status(data.status).json(data.data);
     }
+
+    console.error('Resend API error:', data.status, data.data);
+    return res.status(data.status).json({
+      success: false,
+      message: data.data?.message || 'Email could not be sent.',
+      details: data.data
+    });
   } catch (error) {
     console.error('Error submitting form via Resend:', error);
     return res.status(500).json({

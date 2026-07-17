@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         contactForm.reset();
                         if (window.soundSystem) window.soundSystem.playSuccess();
                     } else {
-
+                        console.error('Contact form error:', json);
                         btn.innerHTML = '<span>Error, Please Retry!</span> <i class="fa-solid fa-triangle-exclamation"></i>';
                         btn.style.background = 'linear-gradient(90deg, #ef4444, #dc2626, #ef4444)';
                         if (window.soundSystem) window.soundSystem.playError();
