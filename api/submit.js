@@ -1,4 +1,8 @@
 const https = require('https');
+const {
+  buildOwnerNotificationEmail,
+  buildClientConfirmationEmail,
+} = require('./email-templates');
 
 const FROM_ADDRESS = 'Abdul Manan <talk@mananbyte.app>';
 
@@ -81,6 +85,7 @@ module.exports = async function handler(req, res) {
 
     const replyToAddress = `${trimmedName} <${trimmedEmail}>`;
     const safeName = escapeHtml(trimmedName);
+    const safeEmail = escapeHtml(trimmedEmail);
     const safeMessage = escapeHtml(trimmedMessage).replace(/\n/g, '<br/>');
 
     const [ownerResult, clientResult] = await Promise.all([
@@ -89,27 +94,18 @@ module.exports = async function handler(req, res) {
         to: receiverEmail,
         reply_to: replyToAddress,
         subject: `New Portfolio Message from ${trimmedName} (${trimmedEmail})`,
-        html: `
-          <div style="font-family: Inter, Arial, sans-serif; color: #111827; line-height: 1.6;">
-            <h3 style="margin-top: 0;">New Contact Form Submission</h3>
-            <p><strong>Name:</strong> ${safeName}</p>
-            <p><strong>Email:</strong> ${escapeHtml(trimmedEmail)}</p>
-            <p><strong>Message:</strong><br/>${safeMessage}</p>
-          </div>
-        `,
+        html: buildOwnerNotificationEmail({
+          name: safeName,
+          email: safeEmail,
+          message: safeMessage,
+        }),
       }),
       sendResendEmail(resendApiKey, {
         from: FROM_ADDRESS,
         to: trimmedEmail,
         reply_to: receiverEmail,
         subject: 'Thanks for reaching out — Abdul Manan',
-        html: `
-          <div style="font-family: Inter, Arial, sans-serif; color: #111827; line-height: 1.6;">
-            <p>Hi ${safeName},</p>
-            <p>Thanks for contacting me through my portfolio. I received your message and will get back to you soon.</p>
-            <p style="color: #6b7280; font-size: 14px;">— Abdul Manan<br/>talk@mananbyte.app</p>
-          </div>
-        `,
+        html: buildClientConfirmationEmail({ name: safeName }),
       }),
     ]);
 
