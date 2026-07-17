@@ -2663,3 +2663,256 @@ body {
         letter-spacing: 2px;
     }
 }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE HARDENING — Mobile / Tablet
+   ══════════════════════════════════════════ */
+
+/* Touch devices: restore normal cursor, hide custom cursor */
+@media (hover: none), (pointer: coarse) {
+    * {
+        cursor: auto !important;
+    }
+
+    .cursor-dot,
+    .cursor-outline {
+        display: none !important;
+    }
+}
+
+/* Tablet (portrait / small landscape) */
+@media (max-width: 1024px) {
+    .main-title {
+        font-size: 3.4rem;
+        padding: 0 12px;
+    }
+
+    .sub-title {
+        font-size: 1.2rem;
+        padding: 0 16px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        padding: 0 12px;
+        line-height: 1.25;
+    }
+
+    .experience-card {
+        padding: 32px 24px;
+    }
+
+    .glass-card {
+        padding: 40px 28px;
+        margin: 0 16px;
+    }
+
+    .hero-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Phones + small tablets */
+@media (max-width: 768px) {
+    html {
+        scroll-padding-bottom: 90px;
+    }
+
+    body {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .main-title {
+        font-size: clamp(1.85rem, 9vw, 2.6rem);
+        word-break: break-word;
+        padding: 0 8px;
+    }
+
+    .sub-title {
+        font-size: 0.95rem;
+        line-height: 1.45;
+    }
+
+    .year {
+        font-size: 1rem;
+        padding: 0 12px;
+        line-height: 1.4;
+    }
+
+    .section-title {
+        font-size: clamp(1.45rem, 6.5vw, 1.85rem);
+        margin-bottom: 28px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        width: min(100%, 320px);
+        margin-left: auto;
+        margin-right: auto;
+        gap: 12px;
+    }
+
+    .hero-buttons .btn-resume {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .experience-card {
+        padding: 28px 18px;
+    }
+
+    .experience-card h3 {
+        font-size: 1.2rem;
+        padding-right: 0;
+        line-height: 1.35;
+    }
+
+    .project-links-wrapper {
+        gap: 10px;
+    }
+
+    .project-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+
+    .skill-filters {
+        gap: 8px;
+        margin-bottom: 32px;
+        padding: 0 4px;
+    }
+
+    .filter-btn {
+        padding: 7px 14px;
+        font-size: 0.75rem;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.2rem;
+        line-height: 1.35;
+    }
+
+    .timeline-date {
+        font-size: 0.95rem !important;
+        letter-spacing: 0.5px;
+    }
+
+    .timeline-number {
+        font-size: 3rem !important;
+        opacity: 0.35;
+    }
+
+    .footer-contact {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .footer-contact-divider {
+        display: none;
+    }
+
+    .footer-nav-links {
+        gap: 10px 16px;
+        max-width: 360px;
+    }
+
+    .footer-nav-links li a {
+        font-size: 0.85rem;
+    }
+
+    .contact-note {
+        font-size: 0.95rem;
+        padding: 0 8px;
+        line-height: 1.5;
+    }
+
+    .site-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .nav-pill {
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .resume-modal-content {
+        width: 94%;
+        max-height: 88vh;
+        margin: 16px;
+        padding: 20px 14px;
+    }
+
+    .about-section .glass-card p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        text-align: left;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 1.75rem;
+    }
+
+    .section-title {
+        font-size: 1.35rem;
+    }
+
+    .skill-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .profiles-grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .nav-link {
+        padding: 6px 4px;
+        min-width: 0;
+    }
+
+    .nav-link .nav-label {
+        font-size: 0.52rem;
+    }
+
+    .nav-link .nav-icon {
+        font-size: 0.9rem;
+    }
+
+    .timeline-item {
+        padding-left: 54px;
+    }
+
+    .glass-card {
+        padding: 24px 16px;
+        margin: 0 8px;
+    }
+
+    .glass-card h2 {
+        font-size: 1.45rem;
+    }
+
+    .preloader-brand-main {
+        font-size: 1.5rem;
+    }
+}
+
+/* Prefer less motion on mobile for smoother scrolling */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    .profile-img-main,
+    .floating-icon,
+    .preloader-particle {
+        animation: none !important;
+    }
+}
