@@ -1,5 +1,18 @@
 const https = require('https');
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
@@ -21,16 +34,35 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ message: 'Missing required fields: name, email, message' });
     }
 
+    const trimmedName = String(name).trim();
+    const trimmedEmail = String(email).trim().toLowerCase();
+    const trimmedMessage = String(message).trim();
+
+    if (!isValidEmail(trimmedEmail)) {
+      return res.status(400).json({ message: 'Please provide a valid email address.' });
+    }
+
+    const replyToAddress = `${trimmedName} <${trimmedEmail}>`;
+    const safeName = escapeHtml(trimmedName);
+    const safeEmail = escapeHtml(trimmedEmail);
+    const safeMessage = escapeHtml(trimmedMessage).replace(/\n/g, '<br/>');
+
     const payload = JSON.stringify({
       from: 'Portfolio Contact <contact@send.mananbyte.app>',
       to: receiverEmail,
-      reply_to: email,
-      subject: `New Portfolio Message from ${name}`,
+      reply_to: replyToAddress,
+      subject: `New Portfolio Message from ${trimmedName} (${trimmedEmail})`,
       html: `
-        <h3>New Contact Form Submission</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong><br/>${String(message).replace(/\n/g, '<br/>')}</p>
+        <div style="font-family: Inter, Arial, sans-serif; color: #111827; line-height: 1.6;">
+          <p style="margin: 0 0 16px; padding: 12px 16px; background: #f3e8ff; border-left: 4px solid #a855f7; border-radius: 8px;">
+            <strong>Reply directly to this person:</strong>
+            <a href="mailto:${safeEmail}" style="color: #7c3aed; text-decoration: none;">${safeEmail}</a>
+          </p>
+          <h3 style="margin-top: 0;">New Contact Form Submission</h3>
+          <p><strong>Name:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
+          <p><strong>Message:</strong><br/>${safeMessage}</p>
+        </div>
       `
     });
 
