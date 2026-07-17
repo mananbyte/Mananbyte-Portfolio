@@ -32,6 +32,7 @@ function buildOwnerNotificationEmail({ name, email, message }) {
     timeStyle: 'short',
     timeZone: 'Asia/Karachi',
   });
+  const initial = String(name).trim().charAt(0).toUpperCase() || 'M';
 
   return `
 <!DOCTYPE html>
@@ -47,44 +48,94 @@ function buildOwnerNotificationEmail({ name, email, message }) {
       <td align="center">
         <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;width:100%;background-color:${theme.bgStrong};border:1px solid ${theme.border};border-radius:12px;overflow:hidden;">
           <tr>
-            <td style="padding:28px 32px;background:linear-gradient(135deg,${theme.bgDark} 0%,${theme.accentGlow} 100%);border-bottom:1px solid ${theme.borderHover};">
-              <p style="margin:0 0 8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">Portfolio · New Message</p>
-              <h1 style="margin:0;font-size:24px;line-height:1.3;color:${theme.textPrimary};font-weight:800;">Contact Form Submission</h1>
-              <p style="margin:10px 0 0;font-size:14px;color:${theme.textSecondary};">A new inquiry arrived on mananbyte.app</p>
+            <td style="padding:32px;text-align:center;background:linear-gradient(160deg,${theme.bgDark} 0%,${theme.accentGlow} 45%,${theme.accentDeep} 100%);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto 16px;">
+                <tr>
+                  <td align="center" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,${theme.accentPurple},${theme.accentDeep});color:${theme.textPrimary};font-size:22px;font-weight:800;line-height:56px;">
+                    ${initial}
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 8px;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:#e9d5ff;font-weight:700;">✦ New Inquiry · mananbyte.app</p>
+              <h1 style="margin:0;font-size:26px;line-height:1.25;color:${theme.textPrimary};font-weight:800;">${name} just messaged you</h1>
+              <p style="margin:12px auto 0;max-width:420px;font-size:14px;line-height:1.6;color:${theme.textSecondary};">A fresh contact form submission landed in your portfolio inbox.</p>
             </td>
           </tr>
+
           <tr>
-            <td style="padding:28px 32px;">
+            <td style="padding:8px 28px 0;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td width="50%" style="padding:8px 6px 8px 0;vertical-align:top;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgRaised};border:1px solid ${theme.borderHover};border-radius:12px;">
+                      <tr>
+                        <td style="padding:16px 18px;">
+                          <p style="margin:0 0 6px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">From</p>
+                          <p style="margin:0;font-size:15px;font-weight:700;color:${theme.textPrimary};">${name}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td width="50%" style="padding:8px 0 8px 6px;vertical-align:top;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgRaised};border:1px solid ${theme.borderHover};border-radius:12px;">
+                      <tr>
+                        <td style="padding:16px 18px;">
+                          <p style="margin:0 0 6px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">When</p>
+                          <p style="margin:0;font-size:13px;font-weight:600;color:${theme.textSecondary};">${timestamp} PKT</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:12px 28px 0;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgRaised};border:1px solid ${theme.border};border-radius:12px;">
                 <tr>
-                  <td style="padding:20px 22px;">
-                    <p style="margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:${theme.accentPurple};">Sender</p>
-                    <p style="margin:0 0 8px;font-size:15px;color:${theme.textPrimary};"><strong style="color:${theme.textSecondary};">Name</strong><br/>${name}</p>
-                    <p style="margin:0 0 8px;font-size:15px;color:${theme.textPrimary};"><strong style="color:${theme.textSecondary};">Email</strong><br/><a href="mailto:${email}" style="color:${theme.accentPurple};text-decoration:none;">${email}</a></p>
-                    <p style="margin:0;font-size:12px;color:${theme.textTertiary};">${timestamp} · PKT</p>
-                  </td>
-                </tr>
-              </table>
-
-              <p style="margin:24px 0 10px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:${theme.accentPurple};">Message</p>
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgRaised};border-left:3px solid ${theme.accentPurple};border-radius:12px;">
-                <tr>
-                  <td style="padding:20px 22px;font-size:15px;line-height:1.75;color:${theme.textSecondary};">${message}</td>
-                </tr>
-              </table>
-
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:28px auto 0;">
-                <tr>
-                  <td align="center">
-                    ${primaryButton(`mailto:${email}`, `Reply to ${name}`)}
+                  <td style="padding:18px 20px;">
+                    <p style="margin:0 0 6px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">Reply Email</p>
+                    <p style="margin:0;font-size:15px;"><a href="mailto:${email}" style="color:${theme.accentPurple};text-decoration:none;font-weight:600;">${email}</a></p>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
+
           <tr>
-            <td style="padding:18px 32px;border-top:1px solid ${theme.border};text-align:center;background-color:${theme.bgDark};">
-              <p style="margin:0;font-size:12px;color:${theme.textTertiary};">Abdul Manan · <a href="${PORTFOLIO_URL}" style="color:${theme.accentPurple};text-decoration:none;">mananbyte.app</a></p>
+            <td style="padding:18px 28px 8px;">
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:${theme.accentPurple};">Message</p>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:linear-gradient(180deg,${theme.bgRaised} 0%,#14091f 100%);border:1px solid ${theme.borderHover};border-left:4px solid ${theme.accentPurple};border-radius:12px;">
+                <tr>
+                  <td style="padding:22px 24px;font-size:15px;line-height:1.8;color:${theme.textSecondary};">${message}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:22px 28px 30px;text-align:center;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgRaised};border:1px solid ${theme.borderHover};border-radius:12px;margin-bottom:18px;">
+                <tr>
+                  <td style="padding:16px 18px;text-align:center;">
+                    <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:${theme.textPrimary};">How to reply in this thread</p>
+                    <p style="margin:0;font-size:13px;line-height:1.6;color:${theme.textTertiary};">Use your email client's <strong style="color:${theme.accentPurple};">Reply</strong> button. It will send to ${email} and keep this conversation in the same thread.</p>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0;">
+                ${secondaryButton(PORTFOLIO_URL, 'Open Portfolio')}
+                ${secondaryButton(`${PORTFOLIO_URL}#contact`, 'Contact Section')}
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:18px 28px;border-top:1px solid ${theme.border};text-align:center;background-color:${theme.bgDark};">
+              <p style="margin:0 0 4px;font-size:12px;color:${theme.textTertiary};">Automated alert from your portfolio contact form</p>
+              <p style="margin:0;font-size:12px;"><a href="${PORTFOLIO_URL}" style="color:${theme.accentPurple};text-decoration:none;">mananbyte.app</a> · talk@mananbyte.app</p>
             </td>
           </tr>
         </table>
