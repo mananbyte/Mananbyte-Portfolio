@@ -620,15 +620,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const nav = document.getElementById('siteNav');
     const indicator = document.getElementById('navIndicator');
     const navLinks = document.querySelectorAll('.nav-link[data-section]');
-    const pageTitleBase = 'Abdul Manan — ML Engineer & Portfolio | mananbyte';
+    const pageTitleBase = 'Abdul Manan Portfolio | ML Engineer @ NUST';
     const sectionTitles = {
         home: pageTitleBase,
-        about: 'About · Abdul Manan',
-        experience: 'Experience · Abdul Manan',
-        projects: 'Projects · Abdul Manan',
-        skills: 'Skills · Abdul Manan',
-        profiles: 'Profiles · Abdul Manan',
-        contact: 'Contact · Abdul Manan',
+        about: 'About | Abdul Manan Portfolio',
+        experience: 'Experience | Abdul Manan Portfolio',
+        projects: 'Projects | Abdul Manan Portfolio',
+        skills: 'Skills | Abdul Manan Portfolio',
+        profiles: 'Profiles | Abdul Manan Portfolio',
+        contact: 'Contact | Abdul Manan Portfolio',
     };
 
     if (!nav || !indicator || !navLinks.length) return;
