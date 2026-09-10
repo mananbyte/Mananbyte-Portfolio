@@ -95,157 +95,224 @@ window.addEventListener('resize', () => {
 
 gsap.registerPlugin(ScrollTrigger);
 
+function initPageAnimations() {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const revealStart = 'top 85%';
+    const revealActions = 'play none none none';
 
-const hero = document.querySelector('.hero');
-if (hero) {
-    const tl = gsap.timeline({ defaults: { ease: "power2.out", duration: 1 } });
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.9 } });
 
-    tl.fromTo(".sub-title",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0 }
-    )
-        .fromTo(".year",
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0 },
-            "-=0.5"
-        )
-        .fromTo(".main-title",
-            { opacity: 0, scale: 0.9, y: 20 },
-            { opacity: 1, scale: 1, y: 0 },
-            "-=0.5"
-        )
-        .fromTo(".hero-buttons .btn-resume:first-child",
-            { opacity: 0, x: -50 },
-            { opacity: 1, x: 0 },
-            "-=0.5"
-        )
-        .fromTo(".hero-buttons .btn-resume:last-child",
-            { opacity: 0, x: 50 },
-            { opacity: 1, x: 0 },
-            "<"
-        );
-}
+        tl.fromTo('.sub-title', { opacity: 0, y: 24 }, { opacity: 1, y: 0 })
+            .fromTo('.main-title', { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, '-=0.55')
+            .fromTo('.year', { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, '-=0.55')
+            .fromTo('.hero-buttons .btn-resume', { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1 }, '-=0.45');
+    }
 
-
-document.querySelectorAll('.section-title').forEach(title => {
-    gsap.fromTo(title,
-        { opacity: 0, y: 40 },
-        {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: title,
-                start: "top 88%",
-                toggleActions: "play none none reverse"
+    const aboutCard = document.querySelector('.about-section .glass-card');
+    if (aboutCard) {
+        gsap.fromTo(
+            aboutCard,
+            { opacity: 0, y: 48 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.85,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: aboutCard,
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
+                onStart() {
+                    aboutCard.classList.add('expanded');
+                },
             }
+        );
+
+        const aboutTitle = aboutCard.querySelector('h2');
+        const aboutText = aboutCard.querySelector('p');
+        if (aboutTitle) {
+            gsap.fromTo(
+                aboutTitle,
+                { opacity: 0, y: 18 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6,
+                    delay: 0.15,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: aboutCard,
+                        start: revealStart,
+                        toggleActions: revealActions,
+                    },
+                }
+            );
         }
-    );
-});
+        if (aboutText) {
+            gsap.fromTo(
+                aboutText,
+                { opacity: 0, y: 18 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6,
+                    delay: 0.28,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: aboutCard,
+                        start: revealStart,
+                        toggleActions: revealActions,
+                    },
+                }
+            );
+        }
+    }
 
+    document.querySelectorAll('.section-title').forEach((title) => {
+        gsap.fromTo(
+            title,
+            { opacity: 0, y: 36 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.75,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: title,
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
+            }
+        );
+    });
 
-const timelineItems = document.querySelectorAll('.timeline-item');
-timelineItems.forEach((item) => {
-    const isLeft = item.classList.contains('left');
-    gsap.fromTo(item,
-        { opacity: 0, x: isLeft ? -80 : 80 },
-        {
+    document.querySelectorAll('.timeline-item').forEach((item) => {
+        const fromVars = isMobile
+            ? { opacity: 0, y: 40 }
+            : { opacity: 0, x: item.classList.contains('left') ? -60 : 60 };
+
+        gsap.fromTo(item, fromVars, {
             opacity: 1,
             x: 0,
-            duration: 1,
-            ease: "power2.out",
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
             scrollTrigger: {
                 trigger: item,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-            }
-        }
-    );
-});
-
-
-const projectCards = document.querySelectorAll('.experience-card');
-if (projectCards.length) {
-    gsap.fromTo(projectCards,
-        { opacity: 0, y: 60, scale: 0.95 },
-        {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            ease: "back.out(1.4)",
-            stagger: 0.12,
-            scrollTrigger: {
-                trigger: '.experience-grid',
-                start: "top 80%",
-                toggleActions: "play none none reverse"
-            }
-        }
-    );
-}
-
-
-const skillCards = document.querySelectorAll('.skill-grid .skill-card');
-if (skillCards.length) {
-    gsap.fromTo(skillCards,
-        { opacity: 0, y: 40, scale: 0.9 },
-        {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.5,
-            ease: "power2.out",
-            stagger: {
-                each: 0.05,
-                from: "start"
+                start: revealStart,
+                toggleActions: revealActions,
             },
-            scrollTrigger: {
-                trigger: '.skill-grid',
-                start: "top 82%",
-                toggleActions: "play none none reverse"
+        });
+    });
+
+    const projectCards = document.querySelectorAll('.experience-card');
+    if (projectCards.length) {
+        gsap.fromTo(
+            projectCards,
+            { opacity: 0, y: 40 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: 'power2.out',
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: '.experience-grid',
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
             }
-        }
-    );
+        );
+    }
+
+    const skillCards = document.querySelectorAll('.skill-grid .skill-card');
+    if (skillCards.length) {
+        gsap.fromTo(
+            skillCards,
+            { opacity: 0, y: 28 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.45,
+                ease: 'power2.out',
+                stagger: 0.04,
+                scrollTrigger: {
+                    trigger: '.skill-grid',
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
+            }
+        );
+    }
+
+    const profileCards = document.querySelectorAll('.profile-card');
+    if (profileCards.length) {
+        gsap.fromTo(
+            profileCards,
+            { opacity: 0, y: 32 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+                stagger: 0.08,
+                scrollTrigger: {
+                    trigger: '.profiles-grid',
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
+            }
+        );
+    }
+
+    const profileHeader = document.querySelector('.profile-header');
+    if (profileHeader) {
+        gsap.fromTo(
+            profileHeader,
+            { opacity: 0, y: 28 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: profileHeader,
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
+            }
+        );
+    }
+
+    const contactContainer = document.querySelector('.contact-container');
+    if (contactContainer) {
+        gsap.fromTo(
+            contactContainer,
+            { opacity: 0, y: 40 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: contactContainer,
+                    start: revealStart,
+                    toggleActions: revealActions,
+                },
+            }
+        );
+    }
+
+    ScrollTrigger.refresh();
 }
 
-
-const contactContainer = document.querySelector('.contact-container');
-if (contactContainer) {
-    gsap.fromTo(contactContainer,
-        { opacity: 0, scale: 0.92, filter: "blur(8px)" },
-        {
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: contactContainer,
-                start: "top 80%",
-                toggleActions: "play none none reverse"
-            }
-        }
-    );
-}
-
-
-const certItems = document.querySelectorAll('.cert-item');
-if (certItems.length) {
-    gsap.fromTo(certItems,
-        { opacity: 0, scale: 0.92, filter: "blur(8px)" },
-        {
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1,
-            ease: "power3.out",
-            stagger: 0.15,
-            scrollTrigger: {
-                trigger: '.cert-grid',
-                start: "top 80%",
-                toggleActions: "play none none reverse"
-            }
-        }
-    );
+if (document.getElementById('preloader')) {
+    window.addEventListener('preloaderComplete', initPageAnimations, { once: true });
+} else if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPageAnimations, { once: true });
+} else {
+    initPageAnimations();
 }

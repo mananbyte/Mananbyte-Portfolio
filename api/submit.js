@@ -1,58 +1,12 @@
-const https = require('https');
+const { buildConfirmRequestEmail } = require('./email-templates');
+const { validateContactEmail } = require('./email-validation');
+const { createConfirmToken, TOKEN_TTL_MS } = require('./confirm-token');
 const {
-  buildOwnerNotificationEmail,
-  buildClientConfirmationEmail,
-} = require('./email-templates');
-
-const FROM_ADDRESS = 'Abdul Manan <talk@mananbyte.app>';
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function sendResendEmail(apiKey, emailPayload) {
-  const payload = JSON.stringify(emailPayload);
-
-  const options = {
-    hostname: 'api.resend.com',
-    path: '/emails',
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(payload),
-    },
-  };
-
-  return new Promise((resolve, reject) => {
-    const request = https.request(options, (response) => {
-      let body = '';
-      response.on('data', (chunk) => {
-        body += chunk;
-      });
-      response.on('end', () => {
-        try {
-          resolve({ status: response.statusCode, data: JSON.parse(body) });
-        } catch (error) {
-          reject(new Error('Failed to parse response JSON'));
-        }
-      });
-    });
-
-    request.on('error', reject);
-    request.write(payload);
-    request.end();
-  });
-}
+  FROM_ADDRESS,
+  PORTFOLIO_URL,
+  escapeHtml,
+  sendResendEmail,
+} = require('./mail');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -69,62 +23,83 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { name, email, message } = req.body || {};
+    const { name, email, message, website } = req.body || {};
+
+    // Honeypot filled → treat as bot, fake success so scrapers don't retry
+    if (website) {
+      return res.status(200).json({
+        success: true,
+        pendingConfirmation: true,
+        message: 'Check your email to confirm your message.',
+      });
+    }
 
     if (!name || !email || !message) {
       return res.status(400).json({ message: 'Missing required fields: name, email, message' });
     }
 
     const trimmedName = String(name).trim();
-    const trimmedEmail = String(email).trim().toLowerCase();
     const trimmedMessage = String(message).trim();
 
-    if (!isValidEmail(trimmedEmail)) {
-      return res.status(400).json({ message: 'Please provide a valid email address.' });
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
+      return res.status(400).json({ message: 'Please provide a valid name.' });
     }
 
-    const replyToAddress = `${trimmedName} <${trimmedEmail}>`;
-    const safeName = escapeHtml(trimmedName);
-    const safeEmail = escapeHtml(trimmedEmail);
-    const safeMessage = escapeHtml(trimmedMessage).replace(/\n/g, '<br/>');
-
-    const [ownerResult, clientResult] = await Promise.all([
-      sendResendEmail(resendApiKey, {
-        from: FROM_ADDRESS,
-        to: receiverEmail,
-        reply_to: replyToAddress,
-        subject: `New Portfolio Message from ${trimmedName} (${trimmedEmail})`,
-        html: buildOwnerNotificationEmail({
-          name: safeName,
-          email: safeEmail,
-          message: safeMessage,
-        }),
-      }),
-      sendResendEmail(resendApiKey, {
-        from: FROM_ADDRESS,
-        to: trimmedEmail,
-        reply_to: receiverEmail,
-        subject: 'Thanks for reaching out — Abdul Manan',
-        html: buildClientConfirmationEmail({ name: safeName }),
-      }),
-    ]);
-
-    if (ownerResult.status !== 200 && ownerResult.status !== 201) {
-      console.error('Resend owner notification error:', ownerResult.status, ownerResult.data);
-      return res.status(ownerResult.status).json({
-        success: false,
-        message: ownerResult.data?.message || 'Email could not be sent.',
-        details: ownerResult.data,
+    if (trimmedMessage.length < 10 || trimmedMessage.length > 5000) {
+      return res.status(400).json({
+        message: 'Message must be between 10 and 5000 characters.',
       });
     }
 
-    if (clientResult.status !== 200 && clientResult.status !== 201) {
-      console.error('Resend client confirmation error:', clientResult.status, clientResult.data);
+    const emailCheck = await validateContactEmail(email);
+    if (!emailCheck.valid) {
+      return res.status(400).json({
+        message: emailCheck.message,
+        code: emailCheck.code,
+      });
     }
 
-    return res.status(200).json({ success: true, message: 'Message sent!' });
+    const trimmedEmail = emailCheck.email;
+    const token = createConfirmToken({
+      name: trimmedName,
+      email: trimmedEmail,
+      message: trimmedMessage,
+    });
+
+    const confirmUrl = `${PORTFOLIO_URL}/api/confirm?token=${encodeURIComponent(token)}`;
+    const safeName = escapeHtml(trimmedName);
+    const expiresInMinutes = Math.round(TOKEN_TTL_MS / 60000);
+
+    const confirmResult = await sendResendEmail(resendApiKey, {
+      from: FROM_ADDRESS,
+      to: trimmedEmail,
+      reply_to: receiverEmail,
+      subject: 'Confirm your message — Abdul Manan',
+      html: buildConfirmRequestEmail({
+        name: safeName,
+        confirmUrl,
+        expiresInMinutes,
+      }),
+    });
+
+    if (confirmResult.status !== 200 && confirmResult.status !== 201) {
+      console.error('Resend confirm-request error:', confirmResult.status, confirmResult.data);
+      return res.status(confirmResult.status).json({
+        success: false,
+        message:
+          confirmResult.data?.message ||
+          'Could not send a confirmation email to that address. Please use a real inbox.',
+        details: confirmResult.data,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      pendingConfirmation: true,
+      message: 'Check your email and click the confirmation link to deliver your message.',
+    });
   } catch (error) {
-    console.error('Error submitting form via Resend:', error);
+    console.error('Error starting contact confirmation:', error);
     return res.status(500).json({
       message: 'Internal Server Error',
       error: error.toString(),

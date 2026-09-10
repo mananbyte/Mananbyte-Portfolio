@@ -1,24 +1,5 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.3
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('expanded');
-            } else {
-                entry.target.classList.remove('expanded');
-            }
-        });
-    }, observerOptions);
-
-    const scrollElements = document.querySelectorAll('.about-section .scroll-reveal');
-    scrollElements.forEach(el => observer.observe(el));
-
     const typingText = document.getElementById('typing-text');
     const words = ["ML ENGINEER", "RESEARCHER", "DEVELOPER", "BUILDER", "CODER"];
     let wordIndex = 0;
@@ -64,26 +45,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cursorDot = document.querySelector('[data-cursor-dot]');
     const cursorOutline = document.querySelector('[data-cursor-outline]');
+    const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
-    window.addEventListener('mousemove', function (e) {
-        const posX = e.clientX;
-        const posY = e.clientY;
+    if (cursorDot && cursorOutline && !isTouchDevice) {
+        window.addEventListener('mousemove', function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
 
-        cursorDot.style.left = `${posX}px`;
-        cursorDot.style.top = `${posY}px`;
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
 
-        cursorOutline.animate({
-            left: `${posX}px`,
-            top: `${posY}px`
-        }, { duration: 500, fill: "forwards" });
-    });
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
 
-    const interactables = document.querySelectorAll('a, button, .floating-icon');
-    interactables.forEach(el => {
-        el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
-        el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
-    });
-
+        const interactables = document.querySelectorAll('a, button, .floating-icon');
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
+        });
+    }
     const timelineSections = document.querySelectorAll('.timeline');
 
     timelineSections.forEach(timelineSection => {
@@ -195,20 +178,110 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        const formStatus = document.getElementById('formStatus');
+        const emailGroup = emailInput ? emailInput.closest('.form-group') : null;
+
+        const CLIENT_EMAIL_REGEX =
+            /^[a-z0-9](?:[a-z0-9._%+-]{0,62}[a-z0-9])?@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i;
+
+        const DISPOSABLE_HINTS = [
+            'mailinator', 'guerrillamail', 'tempmail', 'temp-mail', 'yopmail',
+            'throwaway', 'trashmail', '10minutemail', 'fakeinbox', 'sharklasers',
+            'getnada', 'maildrop', 'dispostable', 'moakt', '1secmail'
+        ];
+
+        function clearEmailError() {
+            if (emailError) {
+                emailError.hidden = true;
+                emailError.textContent = '';
+            }
+            if (emailGroup) emailGroup.classList.remove('has-error');
+        }
+
+        function showEmailError(message) {
+            if (emailError) {
+                emailError.hidden = false;
+                emailError.textContent = message;
+            }
+            if (emailGroup) emailGroup.classList.add('has-error');
+        }
+
+        function setFormStatus(message, type) {
+            if (!formStatus) return;
+            if (!message) {
+                formStatus.hidden = true;
+                formStatus.textContent = '';
+                formStatus.classList.remove('is-error', 'is-success');
+                return;
+            }
+            formStatus.hidden = false;
+            formStatus.textContent = message;
+            formStatus.classList.toggle('is-error', type === 'error');
+            formStatus.classList.toggle('is-success', type === 'success');
+        }
+
+        function validateEmailClient(raw) {
+            const value = String(raw || '').trim().toLowerCase();
+            if (!value) {
+                return { valid: false, message: 'Email is required.' };
+            }
+            if (value.includes('..') || !CLIENT_EMAIL_REGEX.test(value) || value.length > 254) {
+                return {
+                    valid: false,
+                    message: 'Please enter a valid email address (example: name@gmail.com).',
+                };
+            }
+            const domain = value.split('@')[1] || '';
+            if (DISPOSABLE_HINTS.some((hint) => domain.includes(hint))) {
+                return {
+                    valid: false,
+                    message: 'Temporary or disposable emails are not allowed. Please use a permanent email.',
+                };
+            }
+            return { valid: true, email: value };
+        }
+
+        if (emailInput) {
+            emailInput.addEventListener('input', () => {
+                clearEmailError();
+                setFormStatus('');
+            });
+            emailInput.addEventListener('blur', () => {
+                if (!emailInput.value.trim()) {
+                    clearEmailError();
+                    return;
+                }
+                const check = validateEmailClient(emailInput.value);
+                if (!check.valid) showEmailError(check.message);
+                else clearEmailError();
+            });
+        }
+
         contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const btn = contactForm.querySelector('button');
             const originalText = btn.innerHTML;
+            setFormStatus('');
 
-            btn.innerHTML = '<span>Sending...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+            const emailCheck = validateEmailClient(emailInput ? emailInput.value : '');
+            if (!emailCheck.valid) {
+                showEmailError(emailCheck.message);
+                setFormStatus(emailCheck.message, 'error');
+                if (window.soundSystem) window.soundSystem.playError();
+                return;
+            }
+            clearEmailError();
+
+            btn.innerHTML = '<span>Sending link...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
             btn.style.opacity = '0.7';
             btn.style.pointerEvents = 'none';
 
             const formData = new FormData(contactForm);
             const object = Object.fromEntries(formData);
-
-            const json = JSON.stringify(object);
+            object.email = emailCheck.email;
 
             fetch('/api/submit', {
                 method: 'POST',
@@ -216,41 +289,74 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: json
+                body: JSON.stringify(object)
             })
                 .then(async (response) => {
-                    let json = await response.json();
-                    if (response.status == 200) {
+                    let json = {};
+                    try {
+                        json = await response.json();
+                    } catch (_) {
+                        json = { message: 'Unexpected server response.' };
+                    }
 
-                        btn.innerHTML = '<span>Message Delivered!</span> <i class="fa-solid fa-check"></i>';
+                    if (response.status == 200) {
+                        btn.innerHTML = '<span>Check Your Email</span> <i class="fa-solid fa-envelope-open-text"></i>';
                         btn.style.background = 'linear-gradient(90deg, #22c55e, #16a34a, #22c55e)';
                         btn.style.borderColor = '#4ade80';
                         contactForm.reset();
+                        clearEmailError();
+                        setFormStatus(
+                            json.message ||
+                            'Confirmation email sent. Open your inbox and click the link to deliver your message (link expires in 60 minutes).',
+                            'success'
+                        );
                         if (window.soundSystem) window.soundSystem.playSuccess();
                     } else {
+                        const msg = json.message || 'Could not send message. Please try again.';
                         console.error('Contact form error:', json);
                         btn.innerHTML = '<span>Error, Please Retry!</span> <i class="fa-solid fa-triangle-exclamation"></i>';
                         btn.style.background = 'linear-gradient(90deg, #ef4444, #dc2626, #ef4444)';
+                        if (json.code === 'invalid-format' || json.code === 'disposable' || json.code === 'unverifiable' || json.code === 'invalid-domain') {
+                            showEmailError(msg);
+                        }
+                        setFormStatus(msg, 'error');
                         if (window.soundSystem) window.soundSystem.playError();
                     }
                 })
-                .catch(error => {
-
+                .catch(() => {
                     btn.innerHTML = '<span>Error!</span> <i class="fa-solid fa-triangle-exclamation"></i>';
                     btn.style.background = 'linear-gradient(90deg, #ef4444, #dc2626, #ef4444)';
+                    setFormStatus('Network error. Please check your connection and try again.', 'error');
                     if (window.soundSystem) window.soundSystem.playError();
                 })
                 .finally(() => {
-
                     setTimeout(() => {
                         btn.innerHTML = originalText;
                         btn.style.background = '';
                         btn.style.borderColor = '';
                         btn.style.opacity = '1';
                         btn.style.pointerEvents = 'all';
-                    }, 3000);
+                    }, 4000);
                 });
         });
+
+        // After clicking the email confirmation link, land back on contact with success
+        try {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('confirmed') === '1') {
+                setFormStatus(
+                    'Email confirmed — your message was delivered. I will get back to you soon.',
+                    'success'
+                );
+                if (window.soundSystem) window.soundSystem.playSuccess();
+                params.delete('confirmed');
+                const clean =
+                    window.location.pathname +
+                    (params.toString() ? `?${params.toString()}` : '') +
+                    (window.location.hash || '#contact');
+                window.history.replaceState({}, '', clean);
+            }
+        } catch (_) { /* ignore */ }
     }
 
     const resumeModal = document.getElementById('resumeModal');

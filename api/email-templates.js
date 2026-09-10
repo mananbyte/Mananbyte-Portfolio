@@ -162,10 +162,10 @@ function buildClientConfirmationEmail({ name }) {
         <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;width:100%;background-color:${theme.bgStrong};border:1px solid ${theme.border};border-radius:12px;overflow:hidden;">
           <tr>
             <td style="padding:36px 32px 28px;text-align:center;background:linear-gradient(180deg,${theme.accentGlow} 0%,${theme.bgStrong} 85%);">
-              <p style="margin:0 0 12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">Message Received</p>
+              <p style="margin:0 0 12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">Email Confirmed</p>
               <h1 style="margin:0;font-size:28px;line-height:1.25;color:${theme.textPrimary};font-weight:800;">Thanks, ${name}!</h1>
               <p style="margin:16px auto 0;max-width:440px;font-size:15px;line-height:1.75;color:${theme.textSecondary};">
-                I received your message and will get back to you soon. In the meantime, feel free to explore my portfolio, projects, and open-source work.
+                Your email is verified and your message is on its way to me. I will get back to you soon. Meanwhile, feel free to explore my portfolio and projects.
               </p>
             </td>
           </tr>
@@ -200,7 +200,86 @@ function buildClientConfirmationEmail({ name }) {
 </html>`;
 }
 
+/**
+ * Sent immediately after form submit — user must click to verify inbox ownership.
+ */
+function buildConfirmRequestEmail({ name, confirmUrl, expiresInMinutes = 60 }) {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm your message</title>
+</head>
+<body style="margin:0;padding:0;background-color:${theme.bgDark};font-family:${theme.font};">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgDark};padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;width:100%;background-color:${theme.bgStrong};border:1px solid ${theme.border};border-radius:12px;overflow:hidden;">
+          <tr>
+            <td style="padding:36px 32px 24px;text-align:center;background:linear-gradient(160deg,${theme.bgDark} 0%,${theme.accentGlow} 45%,${theme.accentDeep} 100%);">
+              <p style="margin:0 0 10px;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:#e9d5ff;font-weight:700;">✦ Verify Email · mananbyte.app</p>
+              <h1 style="margin:0;font-size:28px;line-height:1.25;color:${theme.textPrimary};font-weight:800;">Confirm your message, ${name}</h1>
+              <p style="margin:14px auto 0;max-width:440px;font-size:15px;line-height:1.7;color:${theme.textSecondary};">
+                One quick step left. Click the button below to verify this inbox — only then will your message be delivered to Abdul.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:28px 32px 8px;text-align:center;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:${theme.bgRaised};border:1px solid ${theme.borderHover};border-radius:12px;margin-bottom:22px;">
+                <tr>
+                  <td style="padding:18px 20px;text-align:left;">
+                    <p style="margin:0 0 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${theme.accentPurple};font-weight:700;">Why this email?</p>
+                    <p style="margin:0;font-size:14px;line-height:1.7;color:${theme.textSecondary};">
+                      This stops spam and fake addresses. If you did not submit a message on
+                      <a href="${PORTFOLIO_URL}" style="color:${theme.accentPurple};text-decoration:none;">mananbyte.app</a>, you can ignore this email.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 22px;">
+                ${primaryButton(confirmUrl, 'Confirm &amp; Send Message')}
+              </p>
+
+              <p style="margin:0 0 6px;font-size:12px;line-height:1.6;color:${theme.textMuted};">
+                Button not working? Paste this link into your browser:
+              </p>
+              <p style="margin:0 0 18px;font-size:12px;line-height:1.5;word-break:break-all;">
+                <a href="${confirmUrl}" style="color:${theme.accentPurple};text-decoration:none;">${confirmUrl}</a>
+              </p>
+              <p style="margin:0;font-size:12px;color:${theme.textTertiary};">
+                This link expires in <strong style="color:${theme.textSecondary};">${expiresInMinutes} minutes</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px;border-top:1px solid ${theme.border};text-align:center;background-color:${theme.bgDark};">
+              <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:${theme.textPrimary};">Abdul Manan</p>
+              <p style="margin:0 0 6px;font-size:13px;color:${theme.textTertiary};">CS Undergrad @ NUST · ML Engineer</p>
+              <p style="margin:0;font-size:13px;">
+                <a href="${PORTFOLIO_URL}" style="color:${theme.accentPurple};text-decoration:none;">mananbyte.app</a>
+                ·
+                <a href="mailto:talk@mananbyte.app" style="color:${theme.accentPurple};text-decoration:none;">talk@mananbyte.app</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 module.exports = {
+  theme,
+  PORTFOLIO_URL,
   buildOwnerNotificationEmail,
   buildClientConfirmationEmail,
+  buildConfirmRequestEmail,
 };
