@@ -3,13 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Abdul Manan | Portfolio</title>
-  <meta name="description" content="Personal Portfolio of Abdul Manan, Computer Science Undergraduate at NUST. Explore my ML projects, experience, and skills.">
+  <title>Abdul Manan — ML Engineer &amp; Portfolio | mananbyte</title>
+  <meta name="description" content="Abdul Manan is a Computer Science undergraduate at NUST building production ML, computer vision, and fullstack AI systems. Explore projects like FreightFlow and Cepharix, experience, skills, and get in touch.">
+  <meta name="author" content="Abdul Manan">
+  <meta name="theme-color" content="#0b0b0b">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.mananbyte.app/">
+
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Abdul Manan | Portfolio">
-  <meta property="og:description" content="Explore my projects, work experience, and technical skills.">
-  <meta property="og:image" content="portfolio_assests/headshot.jpeg">
+  <meta property="og:url" content="https://www.mananbyte.app/">
+  <meta property="og:site_name" content="mananbyte">
+  <meta property="og:title" content="Abdul Manan — ML Engineer &amp; Portfolio">
+  <meta property="og:description" content="NUST CS undergrad shipping ML, computer vision, and fullstack AI products. View projects, experience, and contact.">
+  <meta property="og:image" content="https://www.mananbyte.app/portfolio_assests/headshot.jpeg">
+  <meta property="og:image:alt" content="Portrait of Abdul Manan">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Abdul Manan — ML Engineer &amp; Portfolio">
+  <meta name="twitter:description" content="Production ML, computer vision, and fullstack AI systems from a NUST CS undergrad.">
+  <meta name="twitter:image" content="https://www.mananbyte.app/portfolio_assests/headshot.jpeg">
+
+  <link rel="icon" href="portfolio_assests/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="portfolio_assests/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="portfolio_assests/favicon-16.png">
   <link rel="icon" href="portfolio_assests/profile_avatar.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="portfolio_assests/apple-touch-icon.png">
+
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,9 +37,28 @@
   <script type="module" src="./speed-insights.js"></script>
 </head>
 <body>
+  <a class="skip-link" href="#home">Skip to content</a>
   <div class="scroll-progress-bar" id="scrollProgressBar"></div>
 
-  <nav class="site-nav" id="siteNav">
+  <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span class="mobile-menu-bar" aria-hidden="true"></span>
+    <span class="mobile-menu-bar" aria-hidden="true"></span>
+    <span class="mobile-menu-bar" aria-hidden="true"></span>
+  </button>
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" hidden></div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" hidden>
+    <p class="mobile-menu-brand">Abdul<span class="purple-text">Manan</span></p>
+    <a href="#home" class="mobile-menu-link" data-section="home"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="#about" class="mobile-menu-link" data-section="about"><i class="fa-solid fa-user"></i> About</a>
+    <a href="#experience" class="mobile-menu-link" data-section="experience"><i class="fa-solid fa-briefcase"></i> Experience</a>
+    <a href="#projects" class="mobile-menu-link" data-section="projects"><i class="fa-solid fa-code"></i> Projects</a>
+    <a href="#skills" class="mobile-menu-link" data-section="skills"><i class="fa-solid fa-layer-group"></i> Skills</a>
+    <a href="#profiles" class="mobile-menu-link" data-section="profiles"><i class="fa-solid fa-globe"></i> Profiles</a>
+    <a href="#contact" class="mobile-menu-link" data-section="contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+    <a href="mailto:talk@mananbyte.app" class="mobile-menu-email"><i class="fa-solid fa-paper-plane"></i> talk@mananbyte.app</a>
+  </nav>
+
+  <nav class="site-nav" id="siteNav" aria-label="Primary">
     <div class="nav-pill">
       <span class="nav-indicator" id="navIndicator"></span>
       <a href="#home" class="nav-link active" data-section="home"><i class="fa-solid fa-house nav-icon"></i><span class="nav-label">Home</span></a>
@@ -70,15 +108,12 @@
     <div class="floating-icon icon-bottom-right"><i class="fa-regular fa-lightbulb"></i></div>
 
     <div class="content-wrapper">
-      <h2 class="sub-title">Woah! You Landed on the Portfolio Website of The</h2>
-      <br><br>
+      <p class="sub-title">Portfolio of</p>
       <h1 class="main-title"><span class="purple-text" id="typing-text"></span></h1>
-      <br><br>
-      <h5 class="year">Abdul Manan | CS Undergrad @ NUST</h5>
-      <br>
+      <p class="year">Abdul Manan · CS Undergrad @ NUST</p>
       <div class="hero-buttons">
         <a href="#contact" class="btn-resume">Let's Connect</a>
-        <a href="javascript:void(0)" id="openResumeBtn" class="btn-resume">View Resume</a>
+        <button type="button" id="openResumeBtn" class="btn-resume">View Resume</button>
       </div>
     </div>
   </main>
@@ -159,8 +194,8 @@
           Built a production-grade fullstack trucking platform from scratch — featuring FMCSA-compliant ELD log generation, real-time route calculation via OSRM, HOS (Hours of Service) violation detection, interactive map with Leaflet, SVG log sheets, JWT authentication, trip saving, and a fully responsive glassmorphic UI. Deployed on Railway (Django) + Vercel (React) + Supabase (PostgreSQL).
         </p>
         <div class="project-links-wrapper">
-          <a href="https://freightflow.mananbyte.app" target="_blank" class="project-btn primary-btn"><i class="fa-regular fa-eye"></i> View Live</a>
-          <a href="https://github.com/mananbyte/FreightFlow" target="_blank" class="project-btn primary-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+          <a href="https://freightflow.mananbyte.app" target="_blank" rel="noopener noreferrer" class="project-btn primary-btn"><i class="fa-regular fa-eye"></i> View Live</a>
+          <a href="https://github.com/mananbyte/FreightFlow" target="_blank" rel="noopener noreferrer" class="project-btn primary-btn"><i class="fa-brands fa-github"></i> GitHub</a>
         </div>
       </div>
 
@@ -172,8 +207,7 @@
           Building an upcoming multi-tenant SaaS platform that helps researchers extract citation-grounded insights from scientific literature — turning dense PDFs into structured, trustworthy evidence for faster literature review.
         </p>
         <div class="project-links-wrapper">
-          <a href="javascript:void(0)" class="project-btn primary-btn inactive-btn"><i class="fa-regular fa-eye"></i> View Live</a>
-          <a href="javascript:void(0)" class="project-btn primary-btn inactive-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+          <span class="project-btn coming-soon-btn" aria-disabled="true"><i class="fa-regular fa-clock"></i> Coming Soon</span>
         </div>
       </div>
 
@@ -186,8 +220,7 @@
           Built a GPU-accelerated classical ML pipeline segmenting nuclei on 7,904 PanNuke images using 93 handcrafted features — with memmap streaming, Active Boundary Mining, GPU RFE (12× speedup), and an RF/XGBoost/LightGBM ensemble achieving 0.8802 Macro-F1.
         </p>
         <div class="project-links-wrapper">
-          <a href="javascript:void(0)" class="project-btn primary-btn inactive-btn"><i class="fa-regular fa-eye"></i> View Live</a>
-          <a href="https://github.com/mananbyte/HandCraft-Path" target="_blank" class="project-btn primary-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+          <a href="https://github.com/mananbyte/HandCraft-Path" target="_blank" rel="noopener noreferrer" class="project-btn primary-btn"><i class="fa-brands fa-github"></i> GitHub</a>
         </div>
       </div>
 
@@ -199,8 +232,7 @@
           Built a RAG system to answer academic policy queries from institutional documents — with ingestion, chunking, embedding, and retrieval pipeline for accurate context, integrated with LLMs to reduce hallucinations and ground responses.
         </p>
         <div class="project-links-wrapper">
-          <a href="javascript:void(0)" class="project-btn primary-btn inactive-btn"><i class="fa-regular fa-eye"></i> View Live</a>
-          <a href="javascript:void(0)" class="project-btn primary-btn inactive-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+          <span class="project-btn coming-soon-btn" aria-disabled="true"><i class="fa-regular fa-clock"></i> Coming Soon</span>
         </div>
       </div>
 
@@ -212,8 +244,8 @@
           Built a full clinical workflow prototype covering patient/case management, X-ray upload, AI landmark detection, interactive landmark refinement, and Ricketts cephalometric analysis with report generation — including drag-and-drop landmark editor with undo/redo.
         </p>
         <div class="project-links-wrapper">
-          <a href="https://cepharix.vercel.app" target="_blank" class="project-btn primary-btn"><i class="fa-regular fa-eye"></i> View Live</a>
-          <a href="https://github.com/mananbyte/Cepharix" target="_blank" class="project-btn primary-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+          <a href="https://cepharix.vercel.app" target="_blank" rel="noopener noreferrer" class="project-btn primary-btn"><i class="fa-regular fa-eye"></i> View Live</a>
+          <a href="https://github.com/mananbyte/Cepharix" target="_blank" rel="noopener noreferrer" class="project-btn primary-btn"><i class="fa-brands fa-github"></i> GitHub</a>
         </div>
       </div>
 
@@ -232,7 +264,7 @@
       <button class="filter-btn" data-filter="databases">Databases</button>
       <button class="filter-btn" data-filter="tools">Tools</button>
     </div>
-    <div class="skill-grid" id="skillGrid">
+      <div class="skill-grid" id="skillGrid">
       <div class="skill-card" data-category="languages"><i class="devicon-python-plain colored"></i><span>Python</span></div>
       <div class="skill-card" data-category="languages"><i class="devicon-cplusplus-plain colored"></i><span>C++</span></div>
       <div class="skill-card" data-category="languages"><i class="devicon-c-plain colored"></i><span>C</span></div>
@@ -259,39 +291,46 @@
       <div class="skill-card" data-category="tools"><i class="devicon-linux-plain colored"></i><span>Linux</span></div>
       <div class="skill-card" data-category="tools"><i class="devicon-jupyter-plain colored"></i><span>Jupyter</span></div>
       <div class="skill-card" data-category="tools"><i class="devicon-vercel-original"></i><span>Vercel</span></div>
-    </div>
-  </section>
+      </div>
+      <div class="skills-empty" id="skillsEmpty" hidden>
+        <i class="fa-regular fa-folder-open"></i>
+        <p>No skills in this category yet.</p>
+      </div>
+    </section>
 
   <section class="profiles-section" id="profiles">
     <h2 class="section-title">Connect With Me - <span class="purple-text">Across The Web!</span></h2>
     <div class="profile-header">
       <div class="profile-img-main">
-        <img src="portfolio_assests/headshot.jpeg" alt="Abdul Manan">
+        <picture>
+          <source srcset="portfolio_assests/headshot.webp" type="image/webp">
+          <img src="portfolio_assests/headshot.jpeg" alt="Abdul Manan" width="280" height="280" loading="lazy" decoding="async">
+        </picture>
       </div>
       <div class="profile-text">
         <p class="purple-text">@mananbyte</p>
       </div>
     </div>
     <div class="profiles-grid">
-      <a href="https://linkedin.com/in/mananbyte" target="_blank" class="profile-card">
+      <a href="https://www.linkedin.com/in/mananbyte" target="_blank" rel="noopener noreferrer" class="profile-card">
         <div class="profile-icon"><i class="fa-brands fa-linkedin" style="color: #0077b5;"></i></div>
         <div class="profile-info"><h3>LinkedIn</h3><p>Connect</p></div>
       </a>
-      <a href="https://github.com/mananbyte" target="_blank" class="profile-card">
+      <a href="https://github.com/mananbyte" target="_blank" rel="noopener noreferrer" class="profile-card">
         <div class="profile-icon"><i class="fa-brands fa-github" style="color: #fff;"></i></div>
         <div class="profile-info"><h3>GitHub</h3><p>Commit</p></div>
       </a>
-      <a href="mailto:mananbyte@gmail.com" target="_blank" class="profile-card">
+      <a href="mailto:talk@mananbyte.app" class="profile-card">
         <div class="profile-icon"><i class="fa-solid fa-envelope" style="color: #a855f7;"></i></div>
-        <div class="profile-info"><h3>Email</h3><p>Reach Out</p></div>
+        <div class="profile-info"><h3>Email</h3><p>talk@mananbyte.app</p></div>
       </a>
-      <a href="https://cepharix.vercel.app" target="_blank" class="profile-card">
+      <a href="https://cepharix.vercel.app" target="_blank" rel="noopener noreferrer" class="profile-card">
         <div class="profile-icon"><i class="fa-solid fa-stethoscope" style="color: #22c55e;"></i></div>
         <div class="profile-info"><h3>Cepharix</h3><p>Live Demo</p></div>
       </a>
     </div>
     <br>
-    <p class="profile-note">You can explore further by clicking on any of the profile cards above!</p>
+    <p class="profile-note">Tap a card to open LinkedIn, GitHub, email, or the Cepharix demo.</p>
   </section>
 
   <br>
@@ -301,14 +340,15 @@
       <h2 class="section-title">Get In Touch - <span class="purple-text">Ask Me Anything!</span></h2>
       <h4 class="contact-note">Ready to collaborate or have a project in mind?<br> I'm always open to new opportunities and interesting conversations.<br><span class="contact-verify-hint">After you send, check your inbox and click the confirmation link — that’s how I know your email is real.</span></h4>
       <div class="contact-card">
-        <form id="contactForm" class="contact-form">
+        <form id="contactForm" class="contact-form" novalidate>
           <div class="form-group">
-            <input type="text" id="name" name="name" required placeholder=" " autocomplete="off">
+            <input type="text" id="name" name="name" required autocomplete="name" minlength="2" maxlength="100" placeholder=" ">
             <label for="name">Name</label>
             <i class="fa-solid fa-user input-icon"></i>
+            <p class="form-field-error" id="nameError" role="alert" aria-live="polite" hidden></p>
           </div>
           <div class="form-group">
-            <input type="email" id="email" name="email" required placeholder=" " autocomplete="email" inputmode="email" spellcheck="false">
+            <input type="email" id="email" name="email" required autocomplete="email" inputmode="email" spellcheck="false" placeholder=" ">
             <label for="email">Email</label>
             <i class="fa-solid fa-envelope input-icon"></i>
             <p class="form-field-error" id="emailError" role="alert" aria-live="polite" hidden></p>
@@ -319,9 +359,10 @@
             <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
           </div>
           <div class="form-group">
-            <textarea id="message" name="message" rows="4" required placeholder=" " minlength="10" maxlength="5000"></textarea>
+            <textarea id="message" name="message" rows="4" required minlength="10" maxlength="5000" placeholder=" "></textarea>
             <label for="message">Message</label>
             <i class="fa-solid fa-comment input-icon"></i>
+            <p class="form-field-error" id="messageError" role="alert" aria-live="polite" hidden></p>
           </div>
           <p class="form-status" id="formStatus" role="status" aria-live="polite" hidden></p>
           <button type="submit" class="btn-resume btn-submit">
@@ -341,6 +382,8 @@
         <h2 class="footer-logo">Abdul<span class="purple-text">Manan</span></h2>
         <p class="footer-tagline">Innovation at the Intersection of AI and Engineering!</p>
         <p class="footer-contact">
+          <a href="mailto:talk@mananbyte.app">talk@mananbyte.app</a>
+          <span class="footer-contact-divider">·</span>
           <a href="mailto:mananbyte@gmail.com">mananbyte@gmail.com</a>
           <span class="footer-contact-divider">·</span>
           <a href="tel:+923270941379">+92 327 0941379</a>
@@ -356,9 +399,9 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="footer-socials">
-        <a href="https://linkedin.com/in/mananbyte" target="_blank" class="social-link linkedin"><i class="fa-brands fa-linkedin"></i></a>
-        <a href="https://github.com/mananbyte" target="_blank" class="social-link github"><i class="fa-brands fa-github"></i></a>
-        <a href="mailto:mananbyte@gmail.com" target="_blank" class="social-link email"><i class="fa-solid fa-envelope"></i></a>
+        <a href="https://www.linkedin.com/in/mananbyte" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/mananbyte" target="_blank" rel="noopener noreferrer" class="social-link github" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="mailto:talk@mananbyte.app" class="social-link email" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
       </div>
     </div>
     <div class="footer-bottom">

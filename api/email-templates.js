@@ -1,6 +1,6 @@
 const PORTFOLIO_URL = 'https://www.mananbyte.app';
 const GITHUB_URL = 'https://github.com/mananbyte';
-const LINKEDIN_URL = 'https://linkedin.com/in/mananbyte';
+const LINKEDIN_URL = 'https://www.linkedin.com/in/mananbyte';
 
 const theme = {
   bgDark: '#0b0b0b',
@@ -135,7 +135,7 @@ function buildOwnerNotificationEmail({ name, email, message }) {
           <tr>
             <td style="padding:18px 28px;border-top:1px solid ${theme.border};text-align:center;background-color:${theme.bgDark};">
               <p style="margin:0 0 4px;font-size:12px;color:${theme.textTertiary};">Automated alert from your portfolio contact form</p>
-              <p style="margin:0;font-size:12px;"><a href="${PORTFOLIO_URL}" style="color:${theme.accentPurple};text-decoration:none;">mananbyte.app</a> · talk@mananbyte.app</p>
+              <p style="margin:0;font-size:12px;"><a href="${PORTFOLIO_URL}" style="color:${theme.accentPurple};text-decoration:none;">mananbyte.app</a> · <a href="mailto:talk@mananbyte.app" style="color:${theme.accentPurple};text-decoration:none;">talk@mananbyte.app</a></p>
             </td>
           </tr>
         </table>

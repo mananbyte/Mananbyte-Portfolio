@@ -66,6 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
             el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
             el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
         });
+    } else {
+        if (cursorDot) cursorDot.style.display = 'none';
+        if (cursorOutline) cursorOutline.style.display = 'none';
     }
     const timelineSections = document.querySelectorAll('.timeline');
 
@@ -178,10 +181,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
+        const nameInput = document.getElementById('name');
         const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        const nameError = document.getElementById('nameError');
         const emailError = document.getElementById('emailError');
+        const messageError = document.getElementById('messageError');
         const formStatus = document.getElementById('formStatus');
         const emailGroup = emailInput ? emailInput.closest('.form-group') : null;
+        const nameGroup = nameInput ? nameInput.closest('.form-group') : null;
+        const messageGroup = messageInput ? messageInput.closest('.form-group') : null;
 
         const CLIENT_EMAIL_REGEX =
             /^[a-z0-9](?:[a-z0-9._%+-]{0,62}[a-z0-9])?@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i;
@@ -192,20 +201,18 @@ document.addEventListener('DOMContentLoaded', () => {
             'getnada', 'maildrop', 'dispostable', 'moakt', '1secmail'
         ];
 
-        function clearEmailError() {
-            if (emailError) {
-                emailError.hidden = true;
-                emailError.textContent = '';
+        function setFieldError(group, errorEl, message) {
+            if (errorEl) {
+                errorEl.hidden = !message;
+                errorEl.textContent = message || '';
             }
-            if (emailGroup) emailGroup.classList.remove('has-error');
+            if (group) group.classList.toggle('has-error', Boolean(message));
         }
 
-        function showEmailError(message) {
-            if (emailError) {
-                emailError.hidden = false;
-                emailError.textContent = message;
-            }
-            if (emailGroup) emailGroup.classList.add('has-error');
+        function clearAllFieldErrors() {
+            setFieldError(nameGroup, nameError, '');
+            setFieldError(emailGroup, emailError, '');
+            setFieldError(messageGroup, messageError, '');
         }
 
         function setFormStatus(message, type) {
@@ -220,6 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
             formStatus.textContent = message;
             formStatus.classList.toggle('is-error', type === 'error');
             formStatus.classList.toggle('is-success', type === 'success');
+        }
+
+        function validateName(raw) {
+            const value = String(raw || '').trim();
+            if (!value) return { valid: false, message: 'Please enter your name.' };
+            if (value.length < 2) return { valid: false, message: 'Name must be at least 2 characters.' };
+            if (value.length > 100) return { valid: false, message: 'Name must be under 100 characters.' };
+            return { valid: true, value };
         }
 
         function validateEmailClient(raw) {
@@ -243,37 +258,66 @@ document.addEventListener('DOMContentLoaded', () => {
             return { valid: true, email: value };
         }
 
+        function validateMessage(raw) {
+            const value = String(raw || '').trim();
+            if (!value) return { valid: false, message: 'Please write a message.' };
+            if (value.length < 10) return { valid: false, message: 'Message must be at least 10 characters.' };
+            if (value.length > 5000) return { valid: false, message: 'Message must be under 5000 characters.' };
+            return { valid: true, value };
+        }
+
+        if (nameInput) {
+            nameInput.addEventListener('input', () => setFieldError(nameGroup, nameError, ''));
+        }
         if (emailInput) {
             emailInput.addEventListener('input', () => {
-                clearEmailError();
+                setFieldError(emailGroup, emailError, '');
                 setFormStatus('');
             });
             emailInput.addEventListener('blur', () => {
                 if (!emailInput.value.trim()) {
-                    clearEmailError();
+                    setFieldError(emailGroup, emailError, '');
                     return;
                 }
                 const check = validateEmailClient(emailInput.value);
-                if (!check.valid) showEmailError(check.message);
-                else clearEmailError();
+                if (!check.valid) setFieldError(emailGroup, emailError, check.message);
             });
+        }
+        if (messageInput) {
+            messageInput.addEventListener('input', () => setFieldError(messageGroup, messageError, ''));
         }
 
         contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const btn = contactForm.querySelector('button');
+            const btn = contactForm.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             setFormStatus('');
+            clearAllFieldErrors();
 
+            const nameCheck = validateName(nameInput ? nameInput.value : '');
             const emailCheck = validateEmailClient(emailInput ? emailInput.value : '');
+            const messageCheck = validateMessage(messageInput ? messageInput.value : '');
+
+            let hasError = false;
+            if (!nameCheck.valid) {
+                setFieldError(nameGroup, nameError, nameCheck.message);
+                hasError = true;
+            }
             if (!emailCheck.valid) {
-                showEmailError(emailCheck.message);
-                setFormStatus(emailCheck.message, 'error');
+                setFieldError(emailGroup, emailError, emailCheck.message);
+                hasError = true;
+            }
+            if (!messageCheck.valid) {
+                setFieldError(messageGroup, messageError, messageCheck.message);
+                hasError = true;
+            }
+
+            if (hasError) {
+                setFormStatus('Please fix the highlighted fields and try again.', 'error');
                 if (window.soundSystem) window.soundSystem.playError();
                 return;
             }
-            clearEmailError();
 
             btn.innerHTML = '<span>Sending link...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
             btn.style.opacity = '0.7';
@@ -281,7 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formData = new FormData(contactForm);
             const object = Object.fromEntries(formData);
+            object.name = nameCheck.value;
             object.email = emailCheck.email;
+            object.message = messageCheck.value;
 
             fetch('/api/submit', {
                 method: 'POST',
@@ -304,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         btn.style.background = 'linear-gradient(90deg, #22c55e, #16a34a, #22c55e)';
                         btn.style.borderColor = '#4ade80';
                         contactForm.reset();
-                        clearEmailError();
+                        clearAllFieldErrors();
                         setFormStatus(
                             json.message ||
                             'Confirmation email sent. Open your inbox and click the link to deliver your message (link expires in 60 minutes).',
@@ -317,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         btn.innerHTML = '<span>Error, Please Retry!</span> <i class="fa-solid fa-triangle-exclamation"></i>';
                         btn.style.background = 'linear-gradient(90deg, #ef4444, #dc2626, #ef4444)';
                         if (json.code === 'invalid-format' || json.code === 'disposable' || json.code === 'unverifiable' || json.code === 'invalid-domain') {
-                            showEmailError(msg);
+                            setFieldError(emailGroup, emailError, msg);
                         }
                         setFormStatus(msg, 'error');
                         if (window.soundSystem) window.soundSystem.playError();
@@ -451,7 +497,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         }, index * 60); // slightly slower staggered fade in
                     });
 
-                    // 4. Release filtering lock
+                    // 4. Release filtering lock + empty state
+                    const skillsEmpty = document.getElementById('skillsEmpty');
+                    if (skillsEmpty) {
+                        skillsEmpty.hidden = cardsToShow.length > 0;
+                    }
+
                     const showDuration = cardsToShow.length * 60 + 400;
                     setTimeout(() => {
                         isFiltering = false;
@@ -569,6 +620,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const nav = document.getElementById('siteNav');
     const indicator = document.getElementById('navIndicator');
     const navLinks = document.querySelectorAll('.nav-link[data-section]');
+    const pageTitleBase = 'Abdul Manan — ML Engineer & Portfolio | mananbyte';
+    const sectionTitles = {
+        home: pageTitleBase,
+        about: 'About · Abdul Manan',
+        experience: 'Experience · Abdul Manan',
+        projects: 'Projects · Abdul Manan',
+        skills: 'Skills · Abdul Manan',
+        profiles: 'Profiles · Abdul Manan',
+        contact: 'Contact · Abdul Manan',
+    };
+
     if (!nav || !indicator || !navLinks.length) return;
 
     const sectionIds = Array.from(navLinks).map(link => link.dataset.section);
@@ -597,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setActive(sectionId) {
         if (sectionId === currentActive) return;
         currentActive = sectionId;
+        document.title = sectionTitles[sectionId] || pageTitleBase;
 
         navLinks.forEach(link => {
             if (link.dataset.section === sectionId) {
@@ -605,6 +668,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 link.classList.remove('active');
             }
+        });
+
+        document.querySelectorAll('.mobile-menu-link[data-section]').forEach((link) => {
+            link.classList.toggle('active', link.dataset.section === sectionId);
         });
     }
 
@@ -669,4 +736,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial check
     checkNavVisibility();
+})();
+
+// ══════════════════════════════════════════
+//  MOBILE MENU
+// ══════════════════════════════════════════
+(function () {
+    const btn = document.getElementById('mobileMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('mobileMenuOverlay');
+    if (!btn || !menu || !overlay) return;
+
+    function openMenu() {
+        menu.hidden = false;
+        overlay.hidden = false;
+        btn.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Close menu');
+        document.body.classList.add('menu-open');
+    }
+
+    function closeMenu() {
+        menu.hidden = true;
+        overlay.hidden = true;
+        btn.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Open menu');
+        document.body.classList.remove('menu-open');
+    }
+
+    function toggleMenu() {
+        if (menu.hidden) openMenu();
+        else closeMenu();
+    }
+
+    btn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    menu.querySelectorAll('.mobile-menu-link').forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById(link.dataset.section);
+            closeMenu();
+            if (target) {
+                setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 50);
+            }
+        });
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !menu.hidden) closeMenu();
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && !menu.hidden) closeMenu();
+    });
 })();

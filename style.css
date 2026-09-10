@@ -19,11 +19,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    cursor: none;
 }
 
 html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+    max-width: 100%;
 }
 
 body {
@@ -31,10 +32,29 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-white);
     height: 100vh;
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: auto;
     display: flex;
     justify-content: center;
     position: relative;
+    max-width: 100%;
+    width: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    body,
+    body * {
+        cursor: none;
+    }
+
+    a,
+    button,
+    .floating-icon,
+    input,
+    textarea,
+    label {
+        cursor: none;
+    }
 }
 
 
@@ -388,11 +408,10 @@ body {
 
 body {
     overflow-y: auto;
-
-    overflow-x: hidden;
+    overflow-x: clip;
     height: auto;
     display: block;
-
+    max-width: 100%;
 }
 
 
@@ -1236,6 +1255,15 @@ body {
 
 .project-btn.inactive-btn::before {
     display: none;
+}
+
+.coming-soon-btn {
+    opacity: 0.8;
+    cursor: default;
+    pointer-events: none;
+    border-style: dashed;
+    background: rgba(255, 255, 255, 0.03);
+    color: #c4b5fd;
 }
 
 .experience-card h3 {
@@ -2254,8 +2282,8 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: -15;
     pointer-events: none;
 }
@@ -2772,11 +2800,11 @@ body {
 /* Phones + small tablets */
 @media (max-width: 768px) {
     html {
-        scroll-padding-bottom: 90px;
+        scroll-padding-bottom: 24px;
     }
 
     body {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .main-title {
@@ -2970,5 +2998,243 @@ body {
     .floating-icon,
     .preloader-particle {
         animation: none !important;
+    }
+}
+
+.skills-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: #9ca3af;
+    border: 1px dashed rgba(168, 85, 247, 0.35);
+    border-radius: 16px;
+    max-width: 480px;
+    margin: 24px auto 0;
+}
+
+.skills-empty i {
+    font-size: 1.6rem;
+    color: var(--accent-purple);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.skills-empty[hidden] {
+    display: none !important;
+}
+
+.skip-link {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    z-index: 100000;
+}
+
+.skip-link:focus {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 12px 18px;
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+    background: var(--accent-purple);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0 0 8px 0;
+}
+
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: 14px;
+    z-index: 9995;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(15, 15, 15, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 0;
+}
+
+.mobile-menu-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mobile-menu-btn.is-open .mobile-menu-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-menu-btn.is-open .mobile-menu-bar:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-btn.is-open .mobile-menu-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9993;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.mobile-menu-overlay[hidden],
+.mobile-menu[hidden] {
+    display: none !important;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 9994;
+    width: min(86vw, 320px);
+    height: 100%;
+    padding: calc(80px + env(safe-area-inset-top, 0px)) 22px 28px;
+    background: linear-gradient(180deg, #111 0%, #0b0b0b 100%);
+    border-left: 1px solid rgba(168, 85, 247, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.45);
+}
+
+.mobile-menu-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.mobile-menu-link,
+.mobile-menu-email {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    font-weight: 600;
+}
+
+.mobile-menu-link:hover,
+.mobile-menu-link:focus-visible,
+.mobile-menu-email:hover {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: #fff;
+}
+
+.mobile-menu-email {
+    margin-top: auto;
+    color: var(--accent-purple);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+.profile-img-main img,
+.profile-img-main picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.hero .content-wrapper .sub-title {
+    margin-bottom: 10px;
+}
+
+.hero .content-wrapper .year {
+    margin: 16px 0 28px;
+}
+
+button.btn-resume {
+    font: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+    max-width: 100%;
+}
+
+.experience-grid,
+.skill-grid,
+.profiles-grid,
+.footer-container,
+.timeline,
+.contact-container {
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .site-nav {
+        display: none !important;
+    }
+
+    html {
+        scroll-padding-bottom: 24px;
+    }
+
+    body {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .floating-icon {
+        display: none !important;
+    }
+
+    .timeline-item.left .timeline-date,
+    .timeline-item.right .timeline-date {
+        left: auto;
+        right: auto;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .main-title {
+        overflow-wrap: anywhere;
+    }
+
+    section,
+    .hero,
+    .footer {
+        overflow-x: clip;
     }
 }
